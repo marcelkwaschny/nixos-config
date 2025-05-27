@@ -47,9 +47,11 @@
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-  
+
+  # Enable wayland support
   services.xserver.displayManager.gdm.wayland = true;  
 
+  # Enable hyprland
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -77,15 +79,20 @@
     pulse.enable = true;
   };
 
+  programs.zsh.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.mk = {
-    isNormalUser = true;
-    description = "mk";
-    extraGroups = [ "networkmanager" "wheel" "input" ];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+  users = {
+    defaultUserShell = pkgs.zsh;
+
+    users.mk = {
+      isNormalUser = true;
+      description = "mk";
+      extraGroups = [ "networkmanager" "wheel" "input" ];
+      packages = with pkgs; [];
+    };
   };
+
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
@@ -97,33 +104,16 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-  
-  # Install zsh.
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" ];
-      theme = "agnoster";
-    };
-  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Run programs like vscode in wayland
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   # List packages installed in system profile. To search, run: nix search wget
   environment.systemPackages = with pkgs; [
     git
-    
-    # bar
-    waybar
-    
-    # notification daemon
-    dunst
-    libnotify
     
     # terminal
     foot
